@@ -239,7 +239,8 @@ For detailed information on Device Properties, please refer to the following pag
 | 15 | air\_quality\_sensor     | humidity                       |
 | 16 | air\_quality\_sensor     | total\_pollution               |
 | 17 | air\_quality\_sensor     | total\_pollution\_level        |
-| 18 | filter\_info             | filter\_remain\_percent        |
+| 18 | filter\_info             | top\_filter\_remain\_percent   |
+| 19 | filter\_info             | filter\_remain\_percent        |
 
 
 ### DEVICE\_AIR\_PURIFIER\_FAN

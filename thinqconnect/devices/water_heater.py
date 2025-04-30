@@ -141,7 +141,7 @@ class WaterHeaterDevice(ConnectBaseDevice):
     async def set_current_job_mode(self, mode: str) -> dict | None:
         return await self.do_enum_attribute_command(Property.CURRENT_JOB_MODE, mode)
 
-    async def _set_target_temperature(self, temperature: int, unit: str) -> dict | None:
+    async def _set_target_temperature(self, temperature: int | float, unit: str) -> dict | None:
         property_map = {
             "C": Property.TARGET_TEMPERATURE_C,
             "F": Property.TARGET_TEMPERATURE_F,
@@ -153,8 +153,8 @@ class WaterHeaterDevice(ConnectBaseDevice):
             }
         )
 
-    async def set_target_temperature_c(self, temperature: int) -> dict | None:
+    async def set_target_temperature_c(self, temperature: int | float) -> dict | None:
         return await self._set_target_temperature(temperature, "C")
 
-    async def set_target_temperature_f(self, temperature: int) -> dict | None:
+    async def set_target_temperature_f(self, temperature: int | float) -> dict | None:
         return await self._set_target_temperature(temperature, "F")

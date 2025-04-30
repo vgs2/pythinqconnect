@@ -137,6 +137,13 @@ class OvenSubProfile(ConnectSubDeviceProfile):
 class OvenSubDevice(ConnectSubDevice):
     """Oven Device Sub."""
 
+    _CUSTOM_SET_PROPERTY_NAME = {
+        Property.TARGET_HOUR: "target_time",
+        Property.TARGET_MINUTE: "target_time",
+        Property.TIMER_HOUR: "timer",
+        Property.TIMER_MINUTE: "timer",
+    }
+
     def __init__(
         self,
         profiles: OvenSubProfile,
@@ -221,16 +228,34 @@ class OvenSubDevice(ConnectSubDevice):
         payload = self.profiles.get_enum_attribute_payload("cook_mode", mode)
         return await self._do_attribute_command({"location": {"locationName": self._location_name}, **payload})
 
-    async def _set_target_temperature(self, target_temperature: int, unit: str) -> dict | None:
+    async def _set_target_temperature(self, target_temperature: int | float, unit: str) -> dict | None:
         temperature_map = self.profiles._PROFILE["temperature"]
         payload = self.profiles.get_range_attribute_payload(temperature_map.get(unit), target_temperature)
         return await self._do_attribute_command({"location": {"locationName": self._location_name}, **payload})
 
-    async def set_target_temperature_f(self, target_temperature: int) -> dict | None:
+    async def set_target_temperature_f(self, target_temperature: int | float) -> dict | None:
         return await self._set_target_temperature(target_temperature, "F")
 
-    async def set_target_temperature_c(self, target_temperature: str) -> dict | None:
+    async def set_target_temperature_c(self, target_temperature: int | float) -> dict | None:
         return await self._set_target_temperature(target_temperature, "C")
+
+    async def set_target_time(self, target_hour: int, target_minute: int) -> dict | None:
+        payload = self.profiles.get_enum_attribute_payload("oven_operation_mode", "START")
+        target_time_payload = self.profiles.get_attribute_payload(Property.TARGET_HOUR, target_hour)
+        target_minute_payload = self.profiles.get_attribute_payload(Property.TARGET_MINUTE, target_minute)
+        for key, sub_dict in target_minute_payload.items():
+            target_time_payload[key].update(sub_dict)
+        return await self._do_attribute_command(
+            {"location": {"locationName": self._location_name}, **payload, **target_time_payload}
+        )
+
+    async def set_timer(self, hour: int, minute: int) -> dict | None:
+        return await self.do_multi_attribute_command(
+            {
+                Property.TIMER_HOUR: hour,
+                Property.TIMER_MINUTE: minute,
+            }
+        )
 
 
 class OvenDevice(ConnectMainDevice):

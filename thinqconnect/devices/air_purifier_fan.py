@@ -63,6 +63,15 @@ class AirPurifierFanProfile(ConnectDeviceProfile):
 
 
 class AirPurifierFanDevice(ConnectBaseDevice):
+    _CUSTOM_SET_PROPERTY_NAME = {
+        Property.ABSOLUTE_HOUR_TO_START: "absolute_time_to_start",
+        Property.ABSOLUTE_MINUTE_TO_START: "absolute_time_to_start",
+        Property.ABSOLUTE_HOUR_TO_STOP: "absolute_time_to_stop",
+        Property.ABSOLUTE_MINUTE_TO_STOP: "absolute_time_to_stop",
+        Property.SLEEP_TIMER_RELATIVE_HOUR_TO_STOP: "sleep_timer_relative_time_to_stop",
+        Property.SLEEP_TIMER_RELATIVE_MINUTE_TO_STOP: "sleep_timer_relative_time_to_stop",
+    }
+
     def __init__(
         self,
         thinq_api: ThinQApi,
@@ -120,7 +129,7 @@ class AirPurifierFanDevice(ConnectBaseDevice):
     async def set_warm_mode(self, warm_mode: str) -> dict | None:
         return await self.do_enum_attribute_command(Property.WARM_MODE, warm_mode)
 
-    async def set_wind_temperature(self, wind_temperature: int) -> dict | None:
+    async def set_wind_temperature(self, wind_temperature: int | float) -> dict | None:
         return await self.do_attribute_command(Property.WIND_TEMPERATURE, wind_temperature)
 
     async def set_wind_strength(self, wind_strength: str) -> dict | None:

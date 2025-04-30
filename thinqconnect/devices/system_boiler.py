@@ -199,7 +199,7 @@ class SystemBoilerDevice(ConnectBaseDevice):
     async def set_hot_water_mode(self, mode: str) -> dict | None:
         return await self.do_enum_attribute_command(Property.HOT_WATER_MODE, mode)
 
-    async def _set_hot_water_target_temperature(self, temperature: int, unit: str) -> dict | None:
+    async def _set_hot_water_target_temperature(self, temperature: int | float, unit: str) -> dict | None:
         property_map = {
             "C": Property.HOT_WATER_TARGET_TEMPERATURE_C,
             "F": Property.HOT_WATER_TARGET_TEMPERATURE_F,
@@ -211,13 +211,13 @@ class SystemBoilerDevice(ConnectBaseDevice):
             }
         )
 
-    async def set_hot_water_target_temperature_c(self, temperature: int) -> dict | None:
+    async def set_hot_water_target_temperature_c(self, temperature: int | float) -> dict | None:
         return await self._set_hot_water_target_temperature(temperature, "C")
 
-    async def set_hot_water_target_temperature_f(self, temperature: int) -> dict | None:
+    async def set_hot_water_target_temperature_f(self, temperature: int | float) -> dict | None:
         return await self._set_hot_water_target_temperature(temperature, "F")
 
-    async def _set_room_air_cool_target_temperature(self, temperature: int, unit: str) -> dict | None:
+    async def _set_room_air_cool_target_temperature(self, temperature: int | float, unit: str) -> dict | None:
         property_map = {
             "C": Property.ROOM_AIR_COOL_TARGET_TEMPERATURE_C,
             "F": Property.ROOM_AIR_COOL_TARGET_TEMPERATURE_F,
@@ -229,13 +229,13 @@ class SystemBoilerDevice(ConnectBaseDevice):
             }
         )
 
-    async def set_room_air_cool_target_temperature_c(self, temperature: int) -> dict | None:
+    async def set_room_air_cool_target_temperature_c(self, temperature: int | float) -> dict | None:
         return await self._set_room_air_cool_target_temperature(temperature, "C")
 
-    async def set_room_air_cool_target_temperature_f(self, temperature: int) -> dict | None:
+    async def set_room_air_cool_target_temperature_f(self, temperature: int | float) -> dict | None:
         return await self._set_room_air_cool_target_temperature(temperature, "F")
 
-    async def _set_room_air_heat_target_temperature(self, temperature: int, unit: str) -> dict | None:
+    async def _set_room_air_heat_target_temperature(self, temperature: int | float, unit: str) -> dict | None:
         property_map = {
             "C": Property.ROOM_AIR_HEAT_TARGET_TEMPERATURE_C,
             "F": Property.ROOM_AIR_HEAT_TARGET_TEMPERATURE_F,
@@ -247,13 +247,13 @@ class SystemBoilerDevice(ConnectBaseDevice):
             }
         )
 
-    async def set_room_air_heat_target_temperature_c(self, temperature: int) -> dict | None:
+    async def set_room_air_heat_target_temperature_c(self, temperature: int | float) -> dict | None:
         return await self._set_room_air_heat_target_temperature(temperature, "C")
 
-    async def set_room_air_heat_target_temperature_f(self, temperature: int) -> dict | None:
+    async def set_room_air_heat_target_temperature_f(self, temperature: int | float) -> dict | None:
         return await self._set_room_air_heat_target_temperature(temperature, "F")
 
-    async def _set_room_water_cool_target_temperature(self, temperature: int, unit: str) -> dict | None:
+    async def _set_room_water_cool_target_temperature(self, temperature: int | float, unit: str) -> dict | None:
         property_map = {
             "C": Property.ROOM_WATER_COOL_TARGET_TEMPERATURE_C,
             "F": Property.ROOM_WATER_COOL_TARGET_TEMPERATURE_F,
@@ -265,13 +265,13 @@ class SystemBoilerDevice(ConnectBaseDevice):
             }
         )
 
-    async def set_room_water_cool_target_temperature_c(self, temperature: int) -> dict | None:
+    async def set_room_water_cool_target_temperature_c(self, temperature: int | float) -> dict | None:
         return await self._set_room_water_cool_target_temperature(temperature, "C")
 
-    async def set_room_water_cool_target_temperature_f(self, temperature: int) -> dict | None:
+    async def set_room_water_cool_target_temperature_f(self, temperature: int | float) -> dict | None:
         return await self._set_room_water_cool_target_temperature(temperature, "F")
 
-    async def _set_room_water_heat_target_temperature(self, temperature: int, unit: str) -> dict | None:
+    async def _set_room_water_heat_target_temperature(self, temperature: int | float, unit: str) -> dict | None:
         property_map = {
             "C": Property.ROOM_WATER_HEAT_TARGET_TEMPERATURE_C,
             "F": Property.ROOM_WATER_HEAT_TARGET_TEMPERATURE_F,
@@ -283,8 +283,8 @@ class SystemBoilerDevice(ConnectBaseDevice):
             }
         )
 
-    async def set_room_water_heat_target_temperature_c(self, temperature: int) -> dict | None:
+    async def set_room_water_heat_target_temperature_c(self, temperature: int | float) -> dict | None:
         return await self._set_room_water_heat_target_temperature(temperature, "C")
 
-    async def set_room_water_heat_target_temperature_f(self, temperature: int) -> dict | None:
+    async def set_room_water_heat_target_temperature_f(self, temperature: int | float) -> dict | None:
         return await self._set_room_water_heat_target_temperature(temperature, "F")

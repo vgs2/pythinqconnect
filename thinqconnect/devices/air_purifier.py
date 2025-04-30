@@ -50,6 +50,7 @@ class AirPurifierProfile(ConnectDeviceProfile):
                     "totalPollutionLevel": Property.TOTAL_POLLUTION_LEVEL,
                 },
                 "filterInfo": {
+                    "topFilterRemainPercent": Property.TOP_FILTER_REMAIN_PERCENT,
                     "filterRemainPercent": Property.FILTER_REMAIN_PERCENT,
                 },
             },

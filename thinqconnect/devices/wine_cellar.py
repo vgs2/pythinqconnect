@@ -132,7 +132,7 @@ class WineCellarSubDevice(ConnectSubDevice):
             return True
         return False
 
-    async def _set_target_temperature(self, temperature: float, unit: str) -> dict | None:
+    async def _set_target_temperature(self, temperature: int | float, unit: str) -> dict | None:
         _resource_key = "temperatureInUnits"
         _target_temperature_key = self.get_property_key(_resource_key, "targetTemperature" + unit)
 
@@ -145,10 +145,10 @@ class WineCellarSubDevice(ConnectSubDevice):
         )
         return await self._do_attribute_command(_payload)
 
-    async def set_target_temperature_c(self, temperature: float) -> dict | None:
+    async def set_target_temperature_c(self, temperature: int | float) -> dict | None:
         return await self._set_target_temperature(temperature, "C")
 
-    async def set_target_temperature_f(self, temperature: float) -> dict | None:
+    async def set_target_temperature_f(self, temperature: int | float) -> dict | None:
         return await self._set_target_temperature(temperature, "F")
 
 
