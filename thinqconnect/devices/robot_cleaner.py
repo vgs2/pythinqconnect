@@ -76,6 +76,6 @@ class RobotCleanerDevice(ConnectBaseDevice):
         return await self.do_multi_attribute_command(
             {
                 Property.ABSOLUTE_HOUR_TO_START: hour,
-                **({Property.ABSOLUTE_MINUTE_TO_START: minute} if minute != 0 else {}),
+                Property.ABSOLUTE_MINUTE_TO_START: minute,
             }
         )

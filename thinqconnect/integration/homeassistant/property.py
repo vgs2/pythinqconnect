@@ -8,9 +8,10 @@
 from __future__ import annotations
 
 import inspect
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Any, Awaitable, Callable
+from typing import Any
 
 from thinqconnect import (
     PROPERTY_READABLE,

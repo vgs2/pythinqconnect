@@ -6,10 +6,11 @@
 # The property state interface for Home Assistant.
 
 from collections import deque
-from typing import Any, Awaitable, Callable, Iterable
+from collections.abc import Awaitable, Callable, Iterable
+from typing import Any
 from datetime import time
 
-from thinqconnect import PROPERTY_WRITABLE, ConnectBaseDevice, ThinQAPIException
+from thinqconnect import ConnectBaseDevice, ThinQAPIException
 from thinqconnect.devices.const import Property as ThinQProperty
 
 from .property import ActiveMode, PropertyHolder
@@ -35,6 +36,7 @@ class PropertyState:
         self.target_temp: float | None = None
         self.target_temp_high: float | None = None
         self.target_temp_low: float | None = None
+        self.target_temp_auto: float | None = None
         self.hvac_mode: str = "off"
         self.fan_mode: str | None = None
         self.humidity: int | None = None
@@ -438,6 +440,9 @@ class ClimatePropertyState(PropertyState):
         self.target_temp_high_helper = self.helpers[self.current_preset][
             "target_temp_high"
         ]
+        self.target_temp_auto_helper = self.helpers[self.current_preset][
+            "target_temp_auto"
+        ]
 
     def _get_current_preset(self) -> str:
         """Return the current preset."""
@@ -488,6 +493,9 @@ class ClimatePropertyState(PropertyState):
                 "target_temp_high": self._build_helper(
                     climate_group.target_temp_high_hvac_map, climate_group.unit_holder
                 ),
+                "target_temp_auto": self._build_helper(
+                    climate_group.target_temp_auto_hvac_map, climate_group.unit_holder
+                ),
             }
         return helpers
 
@@ -516,6 +524,8 @@ class ClimatePropertyState(PropertyState):
             return self.get_target_temp_high_holder()
         if self.hvac_mode == "heat":
             return self.get_target_temp_low_holder()
+        if self.hvac_mode == "auto":
+            return self.get_target_temp_auto_holder()
 
         # Fallback
         return self.target_temp_high_helper.get_holder("cool")
@@ -528,6 +538,10 @@ class ClimatePropertyState(PropertyState):
         """Return the current valid target temperature high holder."""
         return self.target_temp_high_helper.current_holder
 
+    def get_target_temp_auto_holder(self) -> PropertyHolder | None:
+        """Return the current valid target temperature auto holder."""
+        return self.target_temp_auto_helper.current_holder
+
     @property
     def min(self) -> float | None:
         """Return the minimum value."""
@@ -536,7 +550,8 @@ class ClimatePropertyState(PropertyState):
             candidates.append(self.target_temp_low_helper.min)
         if self.target_temp_high_helper.min is not None:
             candidates.append(self.target_temp_high_helper.min)
-
+        if self.target_temp_auto_helper.min is not None:
+            candidates.append(self.target_temp_auto_helper.min)
         if candidates:
             return min(candidates)
 
@@ -554,6 +569,8 @@ class ClimatePropertyState(PropertyState):
             candidates.append(self.target_temp_low_helper.max)
         if self.target_temp_high_helper.max is not None:
             candidates.append(self.target_temp_high_helper.max)
+        if self.target_temp_auto_helper.max is not None:
+            candidates.append(self.target_temp_auto_helper.max)
 
         if candidates:
             return max(candidates)
@@ -572,7 +589,7 @@ class ClimatePropertyState(PropertyState):
 
         # Fallback
         if (holder := self.target_temp_high_helper.get_holder("cool")) is not None:
-            return holder.max
+            return holder.step
 
         return None
 
@@ -623,6 +640,9 @@ class ClimatePropertyState(PropertyState):
         self.target_temp_high_helper = self.helpers[self.current_preset][
             "target_temp_high"
         ]
+        self.target_temp_auto_helper = self.helpers[self.current_preset][
+            "target_temp_auto"
+        ]
 
     def update(self, *, preferred_unit: str | None = None) -> None:
         """Update the state."""
@@ -643,10 +663,14 @@ class ClimatePropertyState(PropertyState):
             self.target_temp_high = self.target_temp_high_helper.update(
                 self.hvac_mode, preferred_unit
             )
+            self.target_temp_auto = self.target_temp_auto_helper.update(
+                self.hvac_mode, preferred_unit
+            )
         else:
             self.target_temp = None
             self.target_temp_high = None
             self.target_temp_low = None
+            self.target_temp_auto = None
 
         # Set preferred unit if it exist. Otherwise set unit from unit_holder.
         if self.current_temp_helper.unit is not None:

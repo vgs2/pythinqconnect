@@ -132,6 +132,10 @@ class NotConnectedDeviceError(ThinQAPIException):
     """The class that represents an not connectd exception for LG ThinQ Connect API."""
 
 
+class NotSupportedFeature(ThinQAPIException):
+    """The class that represents an not connectd exception for LG ThinQ Connect API."""
+
+
 class HABridge:
     """A bridge interface that communicates with Home Assistant.
 
@@ -357,6 +361,15 @@ class HABridge:
                     max_key=spec.target_temp_high_max_key,
                 )
                 for hvac_mode, key in spec.target_temp_high_key_map.items()
+            },
+            target_temp_auto_hvac_map={
+                hvac_mode: self._get_temperature_holder_group(
+                    key,
+                    location,
+                    min_key=spec.target_temp_auto_min_key,
+                    max_key=spec.target_temp_auto_max_key,
+                )
+                for hvac_mode, key in spec.target_temp_auto_key_map.items()
             },
             unit_holder=self._get_holder(spec.unit_key, location),
         )
@@ -830,7 +843,7 @@ async def _async_create_ha_bridges(
     try:
         profile = await thinq_api.async_get_device_profile(device_id)
     except Exception:
-        _LOGGER.exception("Cannot create ConnectDevice no profile info:%s", device_info)
+        _LOGGER.error("Cannot create ConnectDevice no profile info:%s", device_info)
         return []
 
     device_group_id = device_info.get("groupId")
@@ -860,7 +873,7 @@ async def _async_create_ha_bridges(
             )
         )
     except Exception:
-        _LOGGER.exception(
+        _LOGGER.error(
             "Cannot create ConnectDevice info:%s, profile:%s", device_info, profile
         )
         return []

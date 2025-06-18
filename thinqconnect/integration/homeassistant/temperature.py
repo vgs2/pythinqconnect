@@ -48,6 +48,7 @@ class ClimateTemperatureGroup:
         target_temp_hvac_map: TemperatureHvacMap,
         target_temp_low_hvac_map: TemperatureHvacMap,
         target_temp_high_hvac_map: TemperatureHvacMap,
+        target_temp_auto_hvac_map: TemperatureHvacMap,
         unit_holder: PropertyHolder | None = None,
     ) -> None:
         """Initialize."""
@@ -55,6 +56,7 @@ class ClimateTemperatureGroup:
         self.target_temp_hvac_map = target_temp_hvac_map
         self.target_temp_low_hvac_map = target_temp_low_hvac_map
         self.target_temp_high_hvac_map = target_temp_high_hvac_map
+        self.target_temp_auto_hvac_map = target_temp_auto_hvac_map
         self.unit_holder = unit_holder
 
 

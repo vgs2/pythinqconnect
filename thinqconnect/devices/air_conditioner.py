@@ -43,10 +43,16 @@ class AirConditionerProfile(ConnectDeviceProfile):
                     "currentTemperatureF": Property.CURRENT_TEMPERATURE_F,
                     "targetTemperatureC": Property.TARGET_TEMPERATURE_C,
                     "targetTemperatureF": Property.TARGET_TEMPERATURE_F,
+                    "minTargetTemperatureC": Property.MIN_TARGET_TEMPERATURE_C,
+                    "minTargetTemperatureF": Property.MIN_TARGET_TEMPERATURE_F,
+                    "maxTargetTemperatureC": Property.MAX_TARGET_TEMPERATURE_C,
+                    "maxTargetTemperatureF": Property.MAX_TARGET_TEMPERATURE_F,
                     "heatTargetTemperatureC": Property.HEAT_TARGET_TEMPERATURE_C,
                     "heatTargetTemperatureF": Property.HEAT_TARGET_TEMPERATURE_F,
                     "coolTargetTemperatureC": Property.COOL_TARGET_TEMPERATURE_C,
                     "coolTargetTemperatureF": Property.COOL_TARGET_TEMPERATURE_F,
+                    "autoTargetTemperatureC": Property.AUTO_TARGET_TEMPERATURE_C,
+                    "autoTargetTemperatureF": Property.AUTO_TARGET_TEMPERATURE_F,
                     "unit": Property.TEMPERATURE_UNIT,
                 },
                 "twoSetTemperature": {
@@ -114,6 +120,12 @@ class AirConditionerProfile(ConnectDeviceProfile):
         Property.HEAT_TARGET_TEMPERATURE_F: "heatTargetTemperature",
         Property.COOL_TARGET_TEMPERATURE_C: "coolTargetTemperature",
         Property.COOL_TARGET_TEMPERATURE_F: "coolTargetTemperature",
+        Property.MIN_TARGET_TEMPERATURE_C: "minTargetTemperature",
+        Property.MIN_TARGET_TEMPERATURE_F: "minTargetTemperature",
+        Property.MAX_TARGET_TEMPERATURE_C: "maxTargetTemperature",
+        Property.MAX_TARGET_TEMPERATURE_F: "maxTargetTemperature",
+        Property.AUTO_TARGET_TEMPERATURE_C: "autoTargetTemperature",
+        Property.AUTO_TARGET_TEMPERATURE_F: "autoTargetTemperature",
         Property.TWO_SET_HEAT_TARGET_TEMPERATURE_C: "heatTargetTemperature",
         Property.TWO_SET_HEAT_TARGET_TEMPERATURE_F: "heatTargetTemperature",
         Property.TWO_SET_COOL_TARGET_TEMPERATURE_C: "coolTargetTemperature",
@@ -291,6 +303,14 @@ class AirConditionerDevice(ConnectBaseDevice):
             }
         )
 
+    async def _set_auto_target_temperature(self, temperature: int | float, unit: str) -> dict | None:
+        return await self.do_multi_attribute_command(
+            {
+                Property.AUTO_TARGET_TEMPERATURE_C if unit == "C" else Property.AUTO_TARGET_TEMPERATURE_F: temperature,
+                Property.TEMPERATURE_UNIT: unit,
+            }
+        )
+
     async def set_heat_target_temperature_c(self, temperature: int | float) -> dict | None:
         return await self._set_heat_target_temperature(temperature, "C")
 
@@ -302,6 +322,12 @@ class AirConditionerDevice(ConnectBaseDevice):
 
     async def set_cool_target_temperature_f(self, temperature: int | float) -> dict | None:
         return await self._set_cool_target_temperature(temperature, "F")
+
+    async def set_auto_target_temperature_c(self, temperature: int | float) -> dict | None:
+        return await self._set_auto_target_temperature(temperature, "C")
+
+    async def set_auto_target_temperature_f(self, temperature: int | float) -> dict | None:
+        return await self._set_auto_target_temperature(temperature, "F")
 
     def __get_temperature_properties(self, unit: str) -> tuple[str, str]:
         heat_target_prop = (

@@ -118,13 +118,8 @@ class AirPurifierFanDevice(ConnectBaseDevice):
             }
         )
 
-    async def set_sleep_timer_relative_time_to_stop(self, hour: int, minute: int = 0) -> dict | None:
-        return await self.do_multi_attribute_command(
-            {
-                Property.SLEEP_TIMER_RELATIVE_HOUR_TO_STOP: hour,
-                **({Property.SLEEP_TIMER_RELATIVE_MINUTE_TO_STOP: minute} if minute != 0 else {}),
-            }
-        )
+    async def set_sleep_timer_relative_time_to_stop(self, hour: int) -> dict | None:
+        return await self.do_attribute_command(Property.SLEEP_TIMER_RELATIVE_HOUR_TO_STOP, hour)
 
     async def set_warm_mode(self, warm_mode: str) -> dict | None:
         return await self.do_enum_attribute_command(Property.WARM_MODE, warm_mode)

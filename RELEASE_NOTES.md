@@ -1,5 +1,12 @@
 # Release Notes
 
+## 1.0.7 (2025-06-18)
+### Features
+* Add **auto target temperature, min target temperature, max target temperature** properties (air_conditioner)
+### Fixes
+* Always include both hour and minute parameters to control the **absolute time to start** property (robot_cleaner)
+* Accept only the hour parameter to control the **sleep timer** property (air_purifier_fan)
+
 ## 1.0.6 (2025-04-30)
 ### Features
 * Add **washer mode** property (washcombo)

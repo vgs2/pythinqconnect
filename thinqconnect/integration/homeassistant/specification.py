@@ -6,10 +6,11 @@
 # Specifications for entity setup.
 
 from abc import ABC
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from datetime import time
 from enum import StrEnum, auto
-from typing import Awaitable, Callable
+
 
 from thinqconnect import (
     AirConditionerDevice,
@@ -19,6 +20,7 @@ from thinqconnect import (
     DeviceType,
     HumidifierDevice,
     RobotCleanerDevice,
+    VentilatorDevice,
 )
 from thinqconnect.devices.const import Location
 from thinqconnect.devices.const import Property as ThinQProperty
@@ -54,6 +56,7 @@ class ThinQPropertyEx(StrEnum):
     HOT_WATER_TARGET_TEMPERATURE = auto()
     HOT_WATER_MAX_TEMPERATURE = auto()
     HOT_WATER_MIN_TEMPERATURE = auto()
+    AUTO_TARGET_TEMPERATURE = auto()
 
 
 class ExtendedProperty(StrEnum):
@@ -129,6 +132,9 @@ class ClimateTemperatureSpec:
     target_temp_high_key_map: dict[str, str] = field(default_factory=dict)
     target_temp_high_min_key: str | None = None
     target_temp_high_max_key: str | None = None
+    target_temp_auto_key_map: dict[str, str] = field(default_factory=dict)
+    target_temp_auto_min_key: str | None = None
+    target_temp_auto_max_key: str | None = None
     unit_key: str | None = None
 
 
@@ -159,18 +165,26 @@ CLIMATE_STATE_MAP = {
             "false": ClimateTemperatureSpec(
                 current_temp_key=ThinQProperty.CURRENT_TEMPERATURE,
                 target_temp_key_map={
+                    "auto": ThinQProperty.TARGET_TEMPERATURE,
+                    "energy_saving": ThinQProperty.TARGET_TEMPERATURE,
                     "cool": ThinQProperty.TARGET_TEMPERATURE,
                     "heat": ThinQProperty.TARGET_TEMPERATURE,
                 },
-                target_temp_low_key_map={"heat": ThinQProperty.HEAT_TARGET_TEMPERATURE},
+                target_temp_low_key_map={
+                    "heat": ThinQProperty.HEAT_TARGET_TEMPERATURE,
+                },
                 target_temp_high_key_map={
-                    "cool": ThinQProperty.COOL_TARGET_TEMPERATURE
+                    "cool": ThinQProperty.COOL_TARGET_TEMPERATURE,
+                },
+                target_temp_auto_key_map={
+                    "auto": ThinQPropertyEx.AUTO_TARGET_TEMPERATURE,
                 },
                 unit_key=ThinQProperty.TEMPERATURE_UNIT,
             ),
             "true": ClimateTemperatureSpec(
                 current_temp_key=ThinQProperty.CURRENT_TEMPERATURE,
                 target_temp_key_map={
+                    "energy_saving": ThinQProperty.TWO_SET_COOL_TARGET_TEMPERATURE,
                     "cool": ThinQProperty.TWO_SET_COOL_TARGET_TEMPERATURE,
                     "heat": ThinQProperty.TWO_SET_HEAT_TARGET_TEMPERATURE,
                 },
@@ -452,7 +466,10 @@ TEMPERATURE_STATE_MAP = {
     ThinQProperty.CURRENT_TEMPERATURE: TemperaturePropertyStateSpec(
         origin_key=ThinQProperty.CURRENT_TEMPERATURE,
         unit_key=ThinQProperty.TEMPERATURE_UNIT,
-        preferred_unit_devices=(DeviceType.WATER_HEATER,),
+        preferred_unit_devices=(
+            DeviceType.WATER_HEATER,
+            DeviceType.VENTILATOR,
+        ),
     ),
     ThinQPropertyEx.ROOM_AIR_CURRENT_TEMPERATURE: TemperaturePropertyStateSpec(
         origin_key=ThinQPropertyEx.ROOM_AIR_CURRENT_TEMPERATURE,
@@ -476,10 +493,10 @@ async def set_sleep_timer_relative_hour_to_stop(
     device: ConnectBaseDevice, value: int
 ) -> None:
     """Set a relative stop sleep timer with hour."""
-    if isinstance(
-        device, (AirConditionerDevice, AirPurifierFanDevice, HumidifierDevice)
-    ):
+    if isinstance(device, (AirConditionerDevice, HumidifierDevice, VentilatorDevice)):
         await device.set_sleep_timer_relative_time_to_stop(hour=value, minute=0)
+    elif isinstance(device, AirPurifierFanDevice):
+        await device.set_sleep_timer_relative_time_to_stop(hour=value)
 
 
 PROPERTY_OPTION_MAP = {
